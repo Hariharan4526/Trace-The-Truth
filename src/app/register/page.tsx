@@ -82,8 +82,8 @@ export default function RegisterPage() {
           <p className="text-gray-400 font-mono mb-4">
             Your analyst account has been created. Redirecting to login...
           </p>
-          <div className="text-blue-400 font-mono">
-            <div className="inline-block border border-blue-500/50 rounded p-4">
+          <div className="text-cyan-400 font-mono">
+            <div className="inline-block border border-cyan-500/50 rounded p-4">
               [Loading: 50%]
             </div>
           </div>

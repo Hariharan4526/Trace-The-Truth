@@ -93,14 +93,14 @@ export default function CreateTeamPage() {
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Navigation */}
-      <nav className="border-b border-blue-500/30 bg-black/50 backdrop-blur">
+      <nav className="border-b border-cyan-500/30 bg-black/50 backdrop-blur">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <Link href="/" className="text-xl font-bold text-white hover:text-blue-400">
+            <Link href="/" className="text-xl font-bold text-white hover:text-cyan-400">
               ⚔ TRACE THE TRUTH
             </Link>
             <div className="space-x-6 text-sm">
-              <Link href="/" className="text-gray-300 hover:text-blue-400 transition font-mono">
+              <Link href="/" className="text-gray-300 hover:text-cyan-400 transition font-mono">
                 HOME
               </Link>
             </div>
@@ -112,18 +112,18 @@ export default function CreateTeamPage() {
       <section className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex items-center justify-center min-h-[calc(100vh-64px)]">
         <div className="w-full">
           {/* Header */}
-          <div className="mb-12 text-center border-b border-blue-500/30 pb-8">
+          <div className="mb-12 text-center border-b border-cyan-500/30 pb-8">
             <div className="flex items-center justify-center gap-2 mb-4">
-              <span className="text-blue-400 font-mono text-sm">⊕ CREATE SQUAD</span>
+              <span className="text-cyan-400 font-mono text-sm">⊕ CREATE SQUAD</span>
             </div>
             <h1 className="text-4xl font-bold text-white mb-2">
               FORM YOUR INVESTIGATION TEAM
             </h1>
-            <p className="text-blue-400 font-mono text-sm">3 MEMBERS PER SQUAD // SECURE COLLABORATION</p>
+            <p className="text-cyan-400 font-mono text-sm">3 MEMBERS PER SQUAD // SECURE COLLABORATION</p>
           </div>
 
           {/* Form Card */}
-          <div className="border border-blue-500/50 rounded p-8 bg-black/50 backdrop-blur max-w-md mx-auto">
+          <div className="border border-cyan-500/50 rounded p-8 bg-black/50 backdrop-blur max-w-md mx-auto">
             {error && (
               <div className="bg-red-500/20 border border-red-500 text-red-300 px-4 py-3 rounded mb-6 font-mono text-sm">
                 ✗ {error}
@@ -133,7 +133,7 @@ export default function CreateTeamPage() {
             <form onSubmit={handleCreateTeam} className="space-y-6">
               {/* Team Name Field */}
               <div>
-                <label className="block text-blue-400 mb-2 font-mono text-sm uppercase">
+                <label className="block text-cyan-400 mb-2 font-mono text-sm uppercase">
                   Squad Name
                 </label>
                 <input
@@ -141,7 +141,7 @@ export default function CreateTeamPage() {
                   value={teamName}
                   onChange={(e) => setTeamName(e.target.value)}
                   maxLength={50}
-                  className="w-full px-4 py-3 bg-black border border-blue-500/30 rounded text-white placeholder-gray-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 font-mono text-sm transition"
+                  className="w-full px-4 py-3 bg-black border border-cyan-500/30 rounded text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/50 font-mono text-sm transition"
                   placeholder="Team name (e.g., Alpha Squad)"
                   disabled={loading}
                 />
@@ -149,8 +149,8 @@ export default function CreateTeamPage() {
               </div>
 
               {/* Info Text */}
-              <div className="bg-blue-500/10 border border-blue-500/30 rounded p-4">
-                <p className="text-blue-400 font-mono text-xs">
+              <div className="bg-cyan-500/10 border border-cyan-500/30 rounded p-4">
+                <p className="text-cyan-400 font-mono text-xs">
                   ⓘ You will be designated as the squad LEADER. You can invite up to 2 additional members using the generated access code.
                 </p>
               </div>
@@ -159,16 +159,16 @@ export default function CreateTeamPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded transition disabled:opacity-50 disabled:cursor-not-allowed font-mono uppercase text-sm tracking-wider"
+                className="w-full bg-cyan-600 hover:bg-cyan-700 text-black font-semibold py-3 rounded transition disabled:opacity-50 disabled:cursor-not-allowed font-mono uppercase text-sm tracking-wider"
               >
                 {loading ? '⊳ INITIALIZING...' : '⊕ CREATE SQUAD'}
               </button>
 
               {/* Back Link */}
-              <div className="text-center pt-4 border-t border-blue-500/30">
+              <div className="text-center pt-4 border-t border-cyan-500/30">
                 <Link
                   href="/"
-                  className="text-blue-400 hover:text-blue-300 font-mono text-sm transition underline"
+                  className="text-cyan-400 hover:text-cyan-300 font-mono text-sm transition underline"
                 >
                   ← Back Home
                 </Link>

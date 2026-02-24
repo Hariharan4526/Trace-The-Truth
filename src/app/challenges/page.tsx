@@ -214,6 +214,22 @@ export default function ChallengesPage() {
     return badges[difficulty as keyof typeof badges] || badges.easy
   }
 
+  const groupedChallenges: Record<'easy' | 'medium' | 'hard', Challenge[]> = {
+    easy: [],
+    medium: [],
+    hard: [],
+  }
+
+  challenges.forEach((challenge) => {
+    groupedChallenges[challenge.difficulty].push(challenge)
+  })
+
+  const difficultySections: Array<{ key: 'easy' | 'medium' | 'hard'; title: string; color: string }> = [
+    { key: 'easy', title: 'Easy', color: 'text-green-400' },
+    { key: 'medium', title: 'Medium', color: 'text-yellow-400' },
+    { key: 'hard', title: 'Hard', color: 'text-red-400' },
+  ]
+
   if (loading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
@@ -249,42 +265,60 @@ export default function ChallengesPage() {
             <p className="text-gray-400 font-mono">NO CHALLENGES AVAILABLE</p>
           </div>
         ) : (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {challenges.map((challenge) => {
-              const badge = getDifficultyBadge(challenge.difficulty)
+          <div className="space-y-12">
+            {difficultySections.map((section) => {
+              const sectionChallenges = groupedChallenges[section.key]
+              if (sectionChallenges.length === 0) return null
+
               return (
-                <button
-                  key={challenge.id}
-                  onClick={() => {
-                    setSelectedChallenge(challenge)
-                    setFlag('')
-                    setResult(null)
-                  }}
-                  className="cyber-card group text-left cursor-pointer"
-                >
-                  <div className="mb-4">
-                    <h3 className="text-xl font-black text-white tracking-wide uppercase mb-2">
-                      {challenge.title}
-                    </h3>
-                    <p className="text-gray-400 text-sm mb-4 line-clamp-2">
-                      {challenge.task || challenge.description || 'No description'}
-                    </p>
+                <div key={section.key}>
+                  <div className="mb-5 flex items-center justify-between border-b border-cyan-500/20 pb-3">
+                    <h2 className={`font-mono text-lg md:text-xl font-bold tracking-widest ${section.color}`}>
+                      {section.title}
+                    </h2>
+                    <span className="text-gray-500 font-mono text-xs">{sectionChallenges.length} CASES</span>
                   </div>
 
-                  <div className="space-y-3">
-                    <p className={`text-xs font-mono px-3 py-1 rounded inline-block border ${badge.color}`}>
-                      {badge.label}
-                    </p>
+                  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    {sectionChallenges.map((challenge) => {
+                      const badge = getDifficultyBadge(challenge.difficulty)
+                      return (
+                        <button
+                          key={challenge.id}
+                          onClick={() => {
+                            setSelectedChallenge(challenge)
+                            setFlag('')
+                            setResult(null)
+                          }}
+                          className="cyber-card group text-left cursor-pointer"
+                        >
+                          <div className="mb-4">
+                            <h3 className="text-xl font-black text-white tracking-wide uppercase mb-2">
+                              {challenge.title}
+                            </h3>
+                            <p className="text-gray-400 text-sm mb-4 line-clamp-2">
+                              {challenge.task || challenge.description || 'No description'}
+                            </p>
+                          </div>
 
-                    <div className="text-2xl font-bold text-cyan-400">
-                      {challenge.points} PTS
-                    </div>
+                          <div className="space-y-3">
+                            <p className={`text-xs font-mono px-3 py-1 rounded inline-block border ${badge.color}`}>
+                              {badge.label}
+                            </p>
 
-                    <div className="text-cyan-400 font-mono text-xs group-hover:text-cyan-300 transition">
-                      {'> '} ACCESS CASE
-                    </div>
+                            <div className="text-2xl font-bold text-cyan-400">
+                              {challenge.points} PTS
+                            </div>
+
+                            <div className="text-cyan-400 font-mono text-xs group-hover:text-cyan-300 transition">
+                              {'> '} ACCESS CASE
+                            </div>
+                          </div>
+                        </button>
+                      )
+                    })}
                   </div>
-                </button>
+                </div>
               )
             })}
           </div>
@@ -333,7 +367,7 @@ export default function ChallengesPage() {
             {/* Task Description */}
             <div className="bg-black/50 border border-cyan-500/20 rounded-lg p-4 mb-6 font-mono text-sm">
               <p className="text-cyan-400 mb-2">{'> TASK'}</p>
-              <p className="text-gray-300 whitespace-pre-wrap text-xs leading-relaxed">
+              <p className="text-gray-100 whitespace-pre-wrap text-lg leading-8">
                 {selectedChallenge.task || selectedChallenge.description || 'No task available'}
               </p>
             </div>
@@ -342,7 +376,7 @@ export default function ChallengesPage() {
             {(selectedChallenge.scenario || selectedChallenge.description) && (
               <div className="bg-black/50 border border-cyan-500/20 rounded-lg p-4 mb-6 font-mono text-sm">
                 <p className="text-cyan-400 mb-2">{'> SCENARIO'}</p>
-                <p className="text-gray-300 whitespace-pre-wrap text-xs leading-relaxed">
+                <p className="text-gray-100 whitespace-pre-wrap text-lg leading-8">
                   {selectedChallenge.scenario || selectedChallenge.description || 'No scenario available'}
                 </p>
               </div>

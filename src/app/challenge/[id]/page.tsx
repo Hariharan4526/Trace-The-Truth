@@ -138,19 +138,19 @@ export default function ChallengePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-900 to-slate-900 flex items-center justify-center">
-        <div className="text-2xl font-bold text-white">Loading challenge...</div>
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-cyan-400 font-mono">LOADING CHALLENGE...</div>
       </div>
     )
   }
 
   if (!challenge) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-900 to-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center">
-          <p className="text-2xl text-red-400 mb-4">{error}</p>
-          <Link href="/challenges" className="text-blue-400 hover:text-blue-300">
-            ← Back to Challenges
+          <p className="text-red-400 font-mono text-lg mb-4">{error}</p>
+          <Link href="/challenges" className="text-cyan-400 hover:text-cyan-300 font-mono underline">
+            → Return to Challenges
           </Link>
         </div>
       </div>
@@ -158,21 +158,23 @@ export default function ChallengePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-900 to-slate-900">
+    <div className="min-h-screen bg-black text-white">
       {/* Navigation */}
-      <nav className="bg-slate-800 border-b border-slate-700">
+      <nav className="border-b border-cyan-500/30 bg-black/50 backdrop-blur">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <Link href="/" className="text-2xl font-bold text-white hover:text-blue-400">
-              🔍 Digital Forensics
+            <Link href="/" className="text-xl font-bold text-white hover:text-cyan-400">
+              ⚔ TRACE THE TRUTH
             </Link>
-            <div className="space-x-4">
-              <Link href="/challenges" className="text-white hover:text-blue-400 transition">
-                Challenges
+            <div className="space-x-6 text-sm">
+              <span className="text-cyan-400 font-mono">SCORE: {user?.score || 0} PTS</span>
+              <span className="text-gray-500">|</span>
+              <Link href="/challenges" className="text-gray-300 hover:text-cyan-400 transition font-mono">
+                CHALLENGES
               </Link>
-              <span className="text-white font-semibold">Score: {user?.score || 0}</span>
-              <button onClick={handleLogout} className="text-white hover:text-red-400 transition">
-                Logout
+              <span className="text-gray-500">|</span>
+              <button onClick={handleLogout} className="text-gray-300 hover:text-red-400 transition font-mono">
+                LOGOUT
               </button>
             </div>
           </div>
@@ -181,20 +183,20 @@ export default function ChallengePage() {
 
       {/* Main Content */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <Link href="/challenges" className="text-blue-400 hover:text-blue-300 mb-8 inline-block">
+        <Link href="/challenges" className="text-cyan-400 hover:text-cyan-300 mb-8 inline-block font-mono">
           ← Back to Challenges
         </Link>
 
-        <div className="bg-slate-800 border border-slate-700 rounded-lg p-8">
+        <div className="cyber-card">
           <div className="flex justify-between items-start mb-8">
             <div>
               <h1 className="text-4xl font-bold text-white mb-4">{challenge.title}</h1>
               <div className="flex gap-4 mt-6">
-                <span className="px-4 py-2 bg-blue-500/20 text-blue-300 border border-blue-500 rounded-lg capitalize font-semibold">
+                <span className="px-4 py-2 bg-cyan-500/20 text-cyan-300 border border-cyan-500 rounded-lg capitalize font-semibold font-mono text-sm uppercase">
                   {challenge.difficulty}
                 </span>
-                <span className="px-4 py-2 bg-yellow-500/20 text-yellow-300 border border-yellow-500 rounded-lg font-semibold">
-                  {challenge.points} Points
+                <span className="px-4 py-2 bg-yellow-500/20 text-yellow-300 border border-yellow-500 rounded-lg font-semibold font-mono text-sm uppercase">
+                  {challenge.points} PTS
                 </span>
               </div>
             </div>
@@ -202,15 +204,15 @@ export default function ChallengePage() {
 
           {/* Challenge Files */}
           {challenge.file_url && (
-            <div className="bg-slate-900 border border-slate-700 rounded-lg p-6 mb-8">
-              <h2 className="text-2xl font-bold text-white mb-4">📁 Challenge Files</h2>
-              <p className="text-gray-300 mb-4">Download the evidence files to analyze:</p>
+            <div className="cyber-box mb-8">
+              <h2 className="text-4xl font-bold text-white mb-4">📁 CHALLENGE FILES</h2>
+              <p className="text-gray-200 mb-4 font-mono text-xl leading-8">Download the evidence files to analyze:</p>
               <a
                 href={challenge.file_url}
                 download
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block px-6 py-3 bg-cyan-600 hover:bg-cyan-700 text-white font-semibold rounded-lg transition flex items-center gap-2"
+                className="inline-block px-6 py-3 bg-cyan-600 hover:bg-cyan-700 text-black font-semibold rounded-lg transition flex items-center gap-2 font-mono text-xl uppercase"
               >
                 ⬇️ Download File
               </a>
@@ -218,16 +220,16 @@ export default function ChallengePage() {
           )}
 
           {/* Case Details */}
-          <div className="bg-slate-900 border border-slate-700 rounded-lg p-6 mb-8">
-            <h2 className="text-2xl font-bold text-white mb-4">📋 Task</h2>
-            <p className="text-gray-300 whitespace-pre-wrap">{challenge.task || challenge.description || challenge.scenario || 'No details available'}</p>
+          <div className="cyber-box mb-8">
+            <h2 className="text-4xl font-bold text-white mb-4">📋 TASK</h2>
+            <p className="text-gray-100 whitespace-pre-wrap font-mono text-3xl leading-[1.9]">{challenge.task || challenge.description || challenge.scenario || 'No details available'}</p>
           </div>
 
           {/* Scenario */}
           {(challenge.scenario || challenge.description) && (
-            <div className="bg-slate-900 border border-slate-700 rounded-lg p-6 mb-8">
-              <h2 className="text-2xl font-bold text-white mb-4">📋 Scenario</h2>
-              <p className="text-gray-300 whitespace-pre-wrap">{challenge.scenario || challenge.description || 'No scenario available'}</p>
+            <div className="cyber-box mb-8">
+              <h2 className="text-4xl font-bold text-white mb-4">📋 SCENARIO</h2>
+              <p className="text-gray-100 whitespace-pre-wrap font-mono text-3xl leading-[1.9]">{challenge.scenario || challenge.description || 'No scenario available'}</p>
             </div>
           )}
 
@@ -247,10 +249,10 @@ export default function ChallengePage() {
           {/* Flag Submission */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-white mb-2 font-bold text-lg">
+              <label className="block text-cyan-400 mb-2 font-mono text-xl uppercase">
                 🚩 Submit Your Flag
               </label>
-              <p className="text-gray-400 mb-3">
+              <p className="text-gray-200 mb-3 font-mono text-lg leading-8">
                 Find the flag hidden in the scenario and submit it below
               </p>
               <input
@@ -258,16 +260,16 @@ export default function ChallengePage() {
                 value={flag}
                 onChange={(e) => setFlag(e.target.value)}
                 placeholder="flag{...}"
-                className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50 font-mono"
+                className="w-full px-4 py-3 bg-black border border-cyan-500/30 rounded text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/50 font-mono"
               />
             </div>
 
             <button
               type="submit"
               disabled={submitting || result?.correct}
-              className="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-cyan-600 text-black font-bold py-3 rounded hover:bg-cyan-700 transition disabled:opacity-50 disabled:cursor-not-allowed font-mono uppercase tracking-wider"
             >
-              {submitting ? 'Submitting...' : result?.correct ? '✅ Solved!' : 'Submit Flag'}
+              {submitting ? '⊳ VALIDATING...' : result?.correct ? '✓ SOLVED' : '⊳ SUBMIT FLAG'}
             </button>
           </form>
         </div>

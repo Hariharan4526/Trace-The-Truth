@@ -277,7 +277,7 @@ export default function LeaderboardPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-blue-400 font-mono">LOADING RANKINGS...</div>
+        <div className="text-cyan-400 font-mono">LOADING RANKINGS...</div>
       </div>
     )
   }
@@ -289,25 +289,36 @@ export default function LeaderboardPage() {
 
       {/* Main Content */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="mb-12 flex items-start justify-between">
-          <div>
-            <div className="flex items-center gap-3 mb-4">
-              <span className="text-green-400 font-mono text-sm">● SYSTEM ONLINE</span>
-              <span className="text-green-400 font-mono text-sm">● LIVE RANKINGS</span>
-              {currentUserRank && <span className="text-blue-400 font-mono text-sm">● YOUR RANK: #{currentUserRank}</span>}
+        <div className="mb-10 cyber-container">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            <div>
+              <div className="flex flex-wrap items-center gap-3 mb-4">
+                <span className="text-green-400 font-mono text-xs">● SYSTEM ONLINE</span>
+                <span className="text-cyan-400 font-mono text-xs">● LIVE RANKINGS</span>
+                {currentUserRank && <span className="text-cyan-400 font-mono text-xs">● YOUR RANK: #{currentUserRank}</span>}
+                {currentUserTeamId && <span className="text-yellow-400 font-mono text-xs">● TEAM TRACKED</span>}
+              </div>
+              <h1 className="text-5xl md:text-6xl font-black text-white mb-3 tracking-tight">
+                SQUAD LEADERBOARD
+              </h1>
+              <p className="text-gray-400 font-mono text-sm uppercase tracking-wide">
+                Live ranking of top investigation squads
+              </p>
             </div>
-            <h1 className="text-4xl font-bold text-white mb-2">Squad Leaderboard</h1>
-            <p className="text-gray-400">
-              Top performing investigation squads
-            </p>
+
+            <button
+              onClick={refreshLeaderboard}
+              disabled={refreshing}
+              className="cyber-btn disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {refreshing ? '⟳ REFRESHING...' : '⟳ REFRESH'}
+            </button>
           </div>
-          <button
-            onClick={refreshLeaderboard}
-            disabled={refreshing}
-            className="bg-cyan-600 hover:bg-cyan-700 disabled:opacity-50 text-white font-mono text-sm px-4 py-2 rounded transition"
-          >
-            {refreshing ? '⟳ REFRESHING...' : '⟳ REFRESH'}
-          </button>
+        </div>
+
+        <div className="mb-5 flex items-center justify-between">
+          <h2 className="text-xl font-bold text-cyan-400">FULL RANKING</h2>
+          <p className="text-gray-500 font-mono text-xs">{entries.length} ACTIVE SQUADS</p>
         </div>
 
         {error && (
@@ -317,70 +328,62 @@ export default function LeaderboardPage() {
         )}
 
         {entries.length === 0 ? (
-          <div className="text-center py-12 border border-blue-500/30 rounded">
+          <div className="text-center py-12 border border-cyan-500/30 rounded">
             <p className="text-gray-400 font-mono">NO SQUADS AVAILABLE</p>
           </div>
         ) : (
-          <div className="border border-blue-500/30 rounded overflow-hidden">
+          <div className="cyber-card overflow-hidden p-0">
             {/* Table Header */}
-            <div className="bg-blue-500/10 border-b border-blue-500/30">
-              <div className="grid grid-cols-12 gap-4 p-6 font-mono text-sm text-blue-400 uppercase font-semibold">
-                <div className="col-span-1">Rank</div>
+            <div className="bg-cyan-500/10 border-b border-cyan-500/30">
+              <div className="grid grid-cols-12 gap-4 px-6 py-4 font-mono text-xs text-cyan-300 uppercase tracking-wider font-semibold">
+                <div className="col-span-2">Rank</div>
                 <div className="col-span-4">Squad Name</div>
                 <div className="col-span-3">Leader</div>
-                <div className="col-span-2">Members</div>
-                <div className="col-span-2">Score</div>
+                <div className="col-span-1">Members</div>
+                <div className="col-span-2 text-right">Score</div>
               </div>
             </div>
 
             {/* Table Body */}
-            <div className="divide-y divide-blue-500/20">
+            <div className="divide-y divide-cyan-500/20">
               {entries.map((entry, index) => (
                 <div
                   key={entry.id}
-                  className={`grid grid-cols-12 gap-4 p-6 transition hover:bg-blue-500/10 ${
-                    index < 3 ? 'bg-blue-500/5' : ''
-                  } ${entry.id === currentUserTeamId ? 'border-l-4 border-green-500' : ''}`}
+                  className={`grid grid-cols-12 gap-4 px-6 py-5 transition-all duration-200 hover:bg-cyan-500/10 ${
+                    index % 2 === 0 ? 'bg-black/50' : 'bg-cyan-500/[0.03]'
+                  } ${entry.id === currentUserTeamId ? 'border-l-4 border-green-400 bg-green-500/10' : ''}`}
                 >
-                  <div className="col-span-1">
-                    <span className="text-2xl font-bold">
-                      {getMedalEmoji(entry.rank)}
-                    </span>
-                    <span className="text-blue-400 font-mono text-lg font-bold ml-2">
-                      #{entry.rank}
-                    </span>
+                  <div className="col-span-2 flex items-center gap-2">
+                    <span className="text-xl">{getMedalEmoji(entry.rank)}</span>
+                    <span className="text-cyan-300 font-bold text-lg">#{entry.rank}</span>
                   </div>
 
-                  <div className="col-span-4">
-                    <Link
-                      href={`/team/${entry.id}`}
-                      className="text-white font-semibold hover:text-blue-400 transition"
-                    >
-                      {entry.name}
-                    </Link>
+                  <div className="col-span-4 flex items-center">
+                    <div>
+                      <Link
+                        href={`/team/${entry.id}`}
+                        className="text-white font-semibold hover:text-cyan-300 transition"
+                      >
+                        {entry.name}
+                      </Link>
+                      {entry.id === currentUserTeamId && (
+                        <p className="text-green-300 font-mono text-[10px] uppercase mt-1">Your squad</p>
+                      )}
+                    </div>
                   </div>
 
-                  <div className="col-span-3">
-                    <p className="text-gray-300">{entry.leader_name}</p>
+                  <div className="col-span-3 flex flex-col justify-center">
+                    <p className="text-gray-200">{entry.leader_name}</p>
                     <p className="text-gray-500 text-xs font-mono">Squad Leader</p>
                   </div>
 
-                  <div className="col-span-2">
-                    <div className="flex items-center gap-2">
-                      <span className="text-green-400 font-bold">
-                        {entry.member_count}
-                      </span>
-                      <span className="text-gray-500 font-mono text-sm">{entry.member_count}/3</span>
-                    </div>
+                  <div className="col-span-1 flex items-center">
+                    <span className="text-green-400 font-bold">{entry.member_count}/3</span>
                   </div>
 
-                  <div className="col-span-2">
-                    <div className="flex items-center gap-2">
-                      <span className="text-yellow-400 font-bold text-xl">
-                        {entry.score}
-                      </span>
-                      <span className="text-gray-500 font-mono text-sm">PTS</span>
-                    </div>
+                  <div className="col-span-2 flex items-center justify-end gap-2">
+                    <span className="text-yellow-400 font-black text-2xl">{entry.score}</span>
+                    <span className="text-gray-500 font-mono text-xs">PTS</span>
                   </div>
                 </div>
               ))}

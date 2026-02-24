@@ -152,7 +152,7 @@ export default function ChallengePage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-blue-400 font-mono">LOADING SCENARIO...</div>
+        <div className="text-cyan-400 font-mono">LOADING SCENARIO...</div>
       </div>
     )
   }
@@ -164,7 +164,7 @@ export default function ChallengePage() {
           <div className="text-red-400 font-mono text-lg mb-4">CHALLENGE NOT FOUND</div>
           <Link
             href="/challenges"
-            className="text-blue-400 hover:text-blue-300 font-mono underline"
+            className="text-cyan-400 hover:text-cyan-300 font-mono underline"
           >
             → Return to Challenges
           </Link>
@@ -176,18 +176,18 @@ export default function ChallengePage() {
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Navigation */}
-      <nav className="border-b border-blue-500/30 bg-black/50 backdrop-blur">
+      <nav className="border-b border-cyan-500/30 bg-black/50 backdrop-blur">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <Link href="/" className="text-xl font-bold text-white hover:text-blue-400">
+            <Link href="/" className="text-xl font-bold text-white hover:text-cyan-400">
               ⚔ TRACE THE TRUTH
             </Link>
             <div className="space-x-6 text-sm">
-              <span className="text-blue-400 font-mono">
+              <span className="text-cyan-400 font-mono">
                 SCORE: {user?.score || 0} PTS
               </span>
               <span className="text-gray-500">|</span>
-              <Link href="/challenges" className="text-gray-300 hover:text-blue-400 transition font-mono">
+              <Link href="/challenges" className="text-gray-300 hover:text-cyan-400 transition font-mono">
                 CHALLENGES
               </Link>
               <span className="text-gray-500">|</span>
@@ -214,7 +214,7 @@ export default function ChallengePage() {
           {/* Main Content */}
           <div className="lg:col-span-2">
             {/* Challenge Header */}
-            <div className="border border-blue-500/30 rounded p-8 mb-8">
+            <div className="border border-cyan-500/30 rounded p-8 mb-8">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
                   <h1 className="text-4xl font-bold text-white mb-3">{challenge.title}</h1>
@@ -226,8 +226,8 @@ export default function ChallengePage() {
             </div>
 
             {/* Task Description */}
-            <div className="border border-blue-500/30 rounded p-8 mb-8">
-              <div className="mb-4 pb-4 border-b border-blue-500/30">
+            <div className="border border-cyan-500/30 rounded p-8 mb-8">
+              <div className="mb-4 pb-4 border-b border-cyan-500/30">
                 <h2 className="text-xl font-bold text-white font-mono">⊳ TASK</h2>
               </div>
               <div className="text-gray-300 font-mono text-sm whitespace-pre-wrap leading-relaxed">
@@ -237,8 +237,8 @@ export default function ChallengePage() {
 
             {/* Scenario */}
             {(challenge.scenario || challenge.description) && (
-              <div className="border border-blue-500/30 rounded p-8 mb-8">
-                <div className="mb-4 pb-4 border-b border-blue-500/30">
+              <div className="border border-cyan-500/30 rounded p-8 mb-8">
+                <div className="mb-4 pb-4 border-b border-cyan-500/30">
                   <h2 className="text-xl font-bold text-white font-mono">⊳ SCENARIO</h2>
                 </div>
                 <div className="text-gray-300 font-mono text-sm whitespace-pre-wrap leading-relaxed">
@@ -248,7 +248,7 @@ export default function ChallengePage() {
             )}
 
             {/* Flag Submission Form */}
-            <div className="border border-blue-500/30 rounded p-8">
+            <div className="border border-cyan-500/30 rounded p-8">
               <form onSubmit={handleSubmit}>
                 <h2 className="text-xl font-bold text-white font-mono mb-6">⊳ SUBMIT FLAG</h2>
 
@@ -265,13 +265,13 @@ export default function ChallengePage() {
                 )}
 
                 <div className="mb-4">
-                  <label className="block text-blue-400 mb-2 font-mono text-sm uppercase">Flag Format</label>
+                  <label className="block text-cyan-400 mb-2 font-mono text-sm uppercase">Flag Format</label>
                   <input
                     type="text"
                     value={flag}
                     onChange={(e) => setFlag(e.target.value)}
                     placeholder="flag{...}"
-                    className="w-full px-4 py-3 bg-black border border-blue-500/30 rounded text-white placeholder-gray-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 font-mono"
+                    className="w-full px-4 py-3 bg-black border border-cyan-500/30 rounded text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/50 font-mono"
                     disabled={submitting}
                   />
                 </div>
@@ -279,7 +279,7 @@ export default function ChallengePage() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded transition disabled:opacity-50 disabled:cursor-not-allowed font-mono uppercase tracking-wider"
+                  className="w-full bg-cyan-600 hover:bg-cyan-700 text-black font-semibold py-3 rounded transition disabled:opacity-50 disabled:cursor-not-allowed font-mono uppercase tracking-wider"
                 >
                   {submitting ? '⊳ VALIDATING...' : '⊳ SUBMIT FLAG'}
                 </button>
@@ -290,33 +290,33 @@ export default function ChallengePage() {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Challenge Info Card */}
-            <div className="border border-blue-500/30 rounded p-6 bg-blue-500/5">
-              <h3 className="text-sm font-mono text-blue-400 mb-4 uppercase">Challenge Details</h3>
+            <div className="border border-cyan-500/30 rounded p-6 bg-cyan-500/5">
+              <h3 className="text-sm font-mono text-cyan-400 mb-4 uppercase">Challenge Details</h3>
               <div className="space-y-4 font-mono text-sm">
                 <div>
                   <div className="text-gray-500 text-xs uppercase mb-1">Reward</div>
                   <div className="text-yellow-400 text-2xl font-bold">{challenge.points}</div>
                   <div className="text-gray-600 text-xs">POINTS</div>
                 </div>
-                <div className="pt-4 border-t border-blue-500/30">
+                <div className="pt-4 border-t border-cyan-500/30">
                   <div className="text-gray-500 text-xs uppercase mb-1">Your Score</div>
-                  <div className="text-blue-400 text-xl font-bold">{user?.score || 0}</div>
+                  <div className="text-cyan-400 text-xl font-bold">{user?.score || 0}</div>
                   <div className="text-gray-600 text-xs">TOTAL PTS</div>
                 </div>
               </div>
             </div>
 
             {/* Navigation Card */}
-            <div className="border border-blue-500/30 rounded p-6">
+            <div className="border border-cyan-500/30 rounded p-6">
               <Link
                 href="/challenges"
-                className="block w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded text-center transition mb-3 font-mono uppercase text-sm"
+                className="block w-full bg-cyan-600 hover:bg-cyan-700 text-black font-semibold py-2 rounded text-center transition mb-3 font-mono uppercase text-sm"
               >
                 ← Back to Challenges
               </Link>
               <Link
                 href="/leaderboard"
-                className="block w-full border border-blue-500/50 hover:border-blue-500 text-blue-400 hover:text-blue-300 font-semibold py-2 rounded text-center transition font-mono uppercase text-sm"
+                className="block w-full border border-cyan-500/50 hover:border-cyan-500 text-cyan-400 hover:text-cyan-300 font-semibold py-2 rounded text-center transition font-mono uppercase text-sm"
               >
                 Tournament Ranking
               </Link>

@@ -728,7 +728,7 @@ export default function AdminPanel() {
             </button>
             <button
               onClick={() => setShowForm(!showForm)}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-mono text-sm px-4 py-2 rounded transition flex items-center gap-2"
+              className="bg-cyan-600 hover:bg-cyan-700 text-black font-mono text-sm px-4 py-2 rounded transition flex items-center gap-2"
             >
               + Add Challenge
             </button>
@@ -827,7 +827,7 @@ export default function AdminPanel() {
                     <div className="border border-cyan-500/20 rounded overflow-hidden">
                       <div className="overflow-x-auto max-h-96 overflow-y-auto">
                         <table className="w-full border-collapse">
-                          <thead className="sticky top-0 bg-blue-500/10 border-b border-cyan-500/30">
+                          <thead className="sticky top-0 bg-cyan-500/10 border-b border-cyan-500/30">
                             <tr>
                               <th className="px-4 py-3 text-left text-gray-500 font-mono text-xs uppercase tracking-wider w-1/4">Challenge Title</th>
                               <th className="px-4 py-3 text-left text-gray-500 font-mono text-xs uppercase tracking-wider w-1/4">Category</th>
@@ -929,7 +929,7 @@ export default function AdminPanel() {
                     <div className="text-4xl font-bold text-white mt-3">{completions.length}</div>
                   </div>
                   <div className="cyber-card text-center">
-                    <div className="cyber-label text-blue-400">Success Rate</div>
+                    <div className="cyber-label text-cyan-400">Success Rate</div>
                     <div className="text-4xl font-bold text-white mt-3">
                       {completions.length > 0 
                         ? Math.round((completions.filter((c: any) => c.is_correct === true).length / completions.length) * 100) 
@@ -1205,7 +1205,7 @@ export default function AdminPanel() {
                   <button
                     type="submit"
                     disabled={uploadingFile}
-                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-mono text-sm px-4 py-2 rounded transition disabled:opacity-50"
+                    className="flex-1 bg-cyan-600 hover:bg-cyan-700 text-black font-mono text-sm px-4 py-2 rounded transition disabled:opacity-50"
                   >
                     {uploadingFile ? '⊳ UPLOADING...' : editingId ? '✎ UPDATE' : '⊕ CREATE'}
                   </button>

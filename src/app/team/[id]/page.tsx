@@ -106,7 +106,7 @@ export default function TeamDashboard() {
   if (loading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-blue-400 font-mono">LOADING SQUAD DATA...</div>
+        <div className="text-cyan-400 font-mono">LOADING SQUAD DATA...</div>
       </div>
     )
   }
@@ -116,7 +116,7 @@ export default function TeamDashboard() {
       <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center">
           <div className="text-red-400 font-mono text-lg mb-4">SQUAD NOT FOUND</div>
-          <Link href="/" className="text-blue-400 hover:text-blue-300 font-mono underline">
+          <Link href="/" className="text-cyan-400 hover:text-cyan-300 font-mono underline">
             → Return Home
           </Link>
         </div>
@@ -129,20 +129,20 @@ export default function TeamDashboard() {
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Navigation */}
-      <nav className="border-b border-blue-500/30 bg-black/50 backdrop-blur">
+      <nav className="border-b border-cyan-500/30 bg-black/50 backdrop-blur">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <Link href="/" className="text-xl font-bold text-white hover:text-blue-400">
+            <Link href="/" className="text-xl font-bold text-white hover:text-cyan-400">
               ⚔ TRACE THE TRUTH
             </Link>
             <div className="space-x-6 text-sm">
-              <span className="text-blue-400 font-mono">SQUAD DASHBOARD</span>
+              <span className="text-cyan-400 font-mono">SQUAD DASHBOARD</span>
               <span className="text-gray-500">|</span>
-              <Link href="/challenges" className="text-gray-300 hover:text-blue-400 transition font-mono">
+              <Link href="/challenges" className="text-gray-300 hover:text-cyan-400 transition font-mono">
                 CHALLENGES
               </Link>
               <span className="text-gray-500">|</span>
-              <Link href="/leaderboard" className="text-gray-300 hover:text-blue-400 transition font-mono">
+              <Link href="/leaderboard" className="text-gray-300 hover:text-cyan-400 transition font-mono">
                 SCOREBOARD
               </Link>
               <span className="text-gray-500">|</span>
@@ -172,22 +172,22 @@ export default function TeamDashboard() {
           {/* Left: Squad Info */}
           <div className="lg:col-span-2 space-y-6">
             {/* Squad Stats */}
-            <div className="border border-blue-500/30 rounded p-8">
+            <div className="border border-cyan-500/30 rounded p-8">
               <h2 className="text-xl font-bold text-white font-mono mb-6">⊳ SQUAD STATISTICS</h2>
               <div className="grid grid-cols-3 gap-4 mb-6">
-                <div className="border border-blue-500/30 rounded p-4 text-center">
+                <div className="border border-cyan-500/30 rounded p-4 text-center">
                   <div className="text-gray-400 font-mono text-xs mb-2">COMBINED SCORE</div>
                   <div className="text-4xl font-bold text-yellow-400">{team.score}</div>
                   <div className="text-gray-600 font-mono text-xs mt-2">POINTS</div>
                 </div>
-                <div className="border border-blue-500/30 rounded p-4 text-center">
+                <div className="border border-cyan-500/30 rounded p-4 text-center">
                   <div className="text-gray-400 font-mono text-xs mb-2">TEAM MEMBERS</div>
                   <div className="text-4xl font-bold text-green-400">{members.length}</div>
                   <div className="text-gray-600 font-mono text-xs mt-2">/ 3 CAPACITY</div>
                 </div>
-                <div className="border border-blue-500/30 rounded p-4 text-center">
+                <div className="border border-cyan-500/30 rounded p-4 text-center">
                   <div className="text-gray-400 font-mono text-xs mb-2">AVG MEMBER SCORE</div>
-                  <div className="text-4xl font-bold text-blue-400">
+                  <div className="text-4xl font-bold text-cyan-400">
                     {members.length > 0 ? Math.round(members.reduce((sum, m) => sum + m.score, 0) / members.length) : 0}
                   </div>
                   <div className="text-gray-600 font-mono text-xs mt-2">PTS</div>
@@ -196,13 +196,13 @@ export default function TeamDashboard() {
             </div>
 
             {/* Team Members */}
-            <div className="border border-blue-500/30 rounded p-8">
+            <div className="border border-cyan-500/30 rounded p-8">
               <h2 className="text-xl font-bold text-white font-mono mb-6">⊳ TEAM ROSTER</h2>
               <div className="space-y-3">
                 {members.map((member) => (
                   <div
                     key={member.id}
-                    className="border border-blue-500/20 rounded p-4 flex justify-between items-center hover:border-blue-500/50 transition"
+                    className="border border-cyan-500/20 rounded p-4 flex justify-between items-center hover:border-cyan-500/50 transition"
                   >
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
@@ -223,8 +223,8 @@ export default function TeamDashboard() {
                 ))}
               </div>
               {members.length < 3 && (
-                <div className="mt-4 p-4 bg-blue-500/10 border border-blue-500/30 rounded">
-                  <p className="text-blue-400 font-mono text-xs">
+                <div className="mt-4 p-4 bg-cyan-500/10 border border-cyan-500/30 rounded">
+                  <p className="text-cyan-400 font-mono text-xs">
                     ⓘ Invite {3 - members.length} more member(s) to complete your squad
                   </p>
                 </div>
@@ -236,18 +236,18 @@ export default function TeamDashboard() {
           <div className="space-y-6 h-fit">
             {/* Access Code Card */}
             {isLeader && (
-              <div className="border border-blue-500/30 rounded p-6 bg-blue-500/5">
-                <h3 className="text-sm font-mono text-blue-400 mb-4 uppercase">Squad Access Code</h3>
+              <div className="border border-cyan-500/30 rounded p-6 bg-cyan-500/5">
+                <h3 className="text-sm font-mono text-cyan-400 mb-4 uppercase">Squad Access Code</h3>
                 <div className="mb-4">
-                  <div className="text-center bg-black border border-blue-500/50 rounded p-4">
-                    <div className="font-mono text-3xl font-bold text-blue-400 tracking-widest">
+                  <div className="text-center bg-black border border-cyan-500/50 rounded p-4">
+                    <div className="font-mono text-3xl font-bold text-cyan-400 tracking-widest">
                       {team.join_code}
                     </div>
                   </div>
                 </div>
                 <button
                   onClick={handleCopyCode}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded transition font-mono uppercase text-xs"
+                  className="w-full bg-cyan-600 hover:bg-cyan-700 text-black font-semibold py-2 rounded transition font-mono uppercase text-xs"
                 >
                   {copied ? '✓ COPIED' : '⊕ COPY CODE'}
                 </button>
@@ -258,33 +258,33 @@ export default function TeamDashboard() {
             )}
 
             {/* Quick Actions */}
-            <div className="border border-blue-500/30 rounded p-6 space-y-3">
-              <h3 className="text-sm font-mono text-blue-400 mb-4 uppercase">Quick Links</h3>
+            <div className="border border-cyan-500/30 rounded p-6 space-y-3">
+              <h3 className="text-sm font-mono text-cyan-400 mb-4 uppercase">Quick Links</h3>
               <Link
                 href="/challenges"
-                className="block w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded transition text-center font-mono uppercase text-sm"
+                className="block w-full bg-cyan-600 hover:bg-cyan-700 text-black font-semibold py-2 rounded transition text-center font-mono uppercase text-sm"
               >
                 → Solve Challenges
               </Link>
               <Link
                 href="/leaderboard"
-                className="block w-full border border-blue-500/50 hover:border-blue-500 text-blue-400 hover:text-blue-300 font-semibold py-2 rounded transition text-center font-mono uppercase text-sm"
+                className="block w-full border border-cyan-500/50 hover:border-cyan-500 text-cyan-400 hover:text-cyan-300 font-semibold py-2 rounded transition text-center font-mono uppercase text-sm"
               >
                 View Rankings
               </Link>
             </div>
 
             {/* Squad Info */}
-            <div className="border border-blue-500/30 rounded p-6 bg-blue-500/5">
-              <h3 className="text-sm font-mono text-blue-400 mb-4 uppercase">Squad Details</h3>
+            <div className="border border-cyan-500/30 rounded p-6 bg-cyan-500/5">
+              <h3 className="text-sm font-mono text-cyan-400 mb-4 uppercase">Squad Details</h3>
               <div className="space-y-3 font-mono text-sm">
                 <div>
                   <div className="text-gray-500 text-xs mb-1">Created</div>
-                  <div className="text-blue-400">
+                  <div className="text-cyan-400">
                     {new Date(team.created_at).toLocaleDateString()}
                   </div>
                 </div>
-                <div className="pt-3 border-t border-blue-500/30">
+                <div className="pt-3 border-t border-cyan-500/30">
                   <div className="text-gray-500 text-xs mb-1">Status</div>
                   <div className="text-green-400">● ACTIVE</div>
                 </div>

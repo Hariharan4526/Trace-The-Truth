@@ -130,7 +130,7 @@ export default function ProfilePage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-blue-400 font-mono">LOADING PROFILE...</div>
+        <div className="text-cyan-400 font-mono">LOADING PROFILE...</div>
       </div>
     )
   }
