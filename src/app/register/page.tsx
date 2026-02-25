@@ -214,22 +214,6 @@ export default function RegisterPage() {
                   )}
                 </div>
 
-                {/* College Field */}
-                <div>
-                  <label className="block text-cyan-400 mb-2 font-mono text-xs uppercase tracking-widest">
-                    {'> '} College_ <span className="text-gray-500">(optional)</span>
-                  </label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-cyan-500/60">✉️</span>
-                    <input
-                      {...register('confirm_password')}
-                      type="password"
-                      className="w-full pl-10 pr-4 py-2.5 bg-black border border-cyan-500/40 rounded text-white placeholder-gray-600 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/30 font-mono text-sm transition"
-                      placeholder="Confirm your password"
-                    />
-                  </div>
-                </div>
-
                 {/* Password Field */}
                 <div>
                   <label className="block text-cyan-400 mb-2 font-mono text-xs uppercase tracking-widest">

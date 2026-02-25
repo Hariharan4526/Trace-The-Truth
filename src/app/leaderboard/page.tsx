@@ -16,6 +16,21 @@ interface TeamLeaderboardEntry {
   rank: number
 }
 
+interface TeamRow {
+  id: string
+  name: string
+  member_count: number
+  leader_id: string
+}
+
+interface UserRow {
+  id: string
+  full_name: string
+  role: string
+  team_id: string | null
+  score: number | null
+}
+
 export default function LeaderboardPage() {
   const router = useRouter()
   const supabase = createClient()
@@ -26,7 +41,74 @@ export default function LeaderboardPage() {
   const [currentUserTeamId, setCurrentUserTeamId] = useState<string | null>(null)
   const [refreshing, setRefreshing] = useState(false)
 
+  const buildLeaderboardData = async (): Promise<TeamLeaderboardEntry[]> => {
+    const { data: teams, error: teamError } = await supabase
+      .from('teams')
+      .select('id, name, member_count, leader_id')
+
+    if (teamError) {
+      throw new Error(teamError.message)
+    }
+
+    if (!teams || teams.length === 0) {
+      return []
+    }
+
+    const teamRows = teams as TeamRow[]
+    const teamIds = teamRows.map((team) => team.id)
+    const leaderIdSet = new Set(teamRows.map((team) => team.leader_id))
+
+    const { data: users, error: userError } = await supabase
+      .from('users')
+      .select('id, full_name, role, team_id, score')
+      .in('team_id', teamIds)
+
+    if (userError) {
+      throw new Error(userError.message)
+    }
+
+    const userRows = (users || []) as UserRow[]
+    const leaderMap = new Map<string, string>()
+    const leaderRoleMap = new Map<string, string>()
+    const teamScoreMap = new Map<string, number>()
+
+    userRows.forEach((teamUser) => {
+      if (teamUser.team_id) {
+        teamScoreMap.set(teamUser.team_id, (teamScoreMap.get(teamUser.team_id) || 0) + (teamUser.score || 0))
+      }
+
+      if (leaderIdSet.has(teamUser.id)) {
+        leaderMap.set(teamUser.id, teamUser.full_name)
+        leaderRoleMap.set(teamUser.id, teamUser.role)
+      }
+    })
+
+    const filteredTeams = teamRows.filter((team) => leaderRoleMap.get(team.leader_id) !== 'admin')
+
+    return filteredTeams
+      .map((team) => ({
+        id: team.id,
+        name: team.name,
+        score: teamScoreMap.get(team.id) || 0,
+        member_count: team.member_count,
+        leader_id: team.leader_id,
+        leader_name: leaderMap.get(team.leader_id) || 'Unknown',
+        rank: 0,
+      }))
+      .sort((a, b) => {
+        if (b.score !== a.score) return b.score - a.score
+        return a.name.localeCompare(b.name)
+      })
+      .map((team, index) => ({
+        ...team,
+        rank: index + 1,
+      }))
+  }
+
   useEffect(() => {
+    let pollInterval: ReturnType<typeof setInterval> | null = null
+    let subscription: ReturnType<typeof supabase.channel> | null = null
+
     const loadLeaderboard = async () => {
       const { data: { session } } = await supabase.auth.getSession()
       if (!session) {
@@ -42,160 +124,44 @@ export default function LeaderboardPage() {
           .eq('id', session.user.id)
           .single()
 
-        setCurrentUserTeamId(userData?.team_id || null)
+        const trackedTeamId = userData?.team_id || null
+        setCurrentUserTeamId(trackedTeamId)
 
-        // Fetch all teams with their scores
-        const { data: teams, error: teamError } = await supabase
-          .from('teams')
-          .select('id, name, score, member_count, leader_id')
-          .order('score', { ascending: false })
-
-        if (teamError) {
-          setError(teamError.message)
-          return
-        }
-
-        // Get leader names and roles
-        if (teams && teams.length > 0) {
-          const leaderIds = teams.map(t => t.leader_id)
-          const { data: leaders } = await supabase
-            .from('users')
-            .select('id, full_name, role')
-            .in('id', leaderIds)
-
-          const leaderMap = new Map()
-          const leaderRoleMap = new Map()
-          leaders?.forEach(l => {
-            leaderMap.set(l.id, l.full_name)
-            leaderRoleMap.set(l.id, l.role)
-          })
-
-          // Filter out teams with admin leaders and rank them
-          const filteredTeams = teams.filter(team => leaderRoleMap.get(team.leader_id) !== 'admin')
-          
-          const leaderboardData: TeamLeaderboardEntry[] = filteredTeams.map((team, index) => ({
-            id: team.id,
-            name: team.name,
-            score: team.score,
-            member_count: team.member_count,
-            leader_id: team.leader_id,
-            leader_name: leaderMap.get(team.leader_id) || 'Unknown',
-            rank: index + 1,
-          }))
-
+        const applyLeaderboardState = (leaderboardData: TeamLeaderboardEntry[]) => {
           setEntries(leaderboardData)
-
-          // Find current user's rank
-          const currentTeam = leaderboardData.find(t => t.id === userData?.team_id)
-          if (currentTeam) {
-            setCurrentUserRank(currentTeam.rank)
-          }
+          const currentTeam = leaderboardData.find((team) => team.id === trackedTeamId)
+          setCurrentUserRank(currentTeam ? currentTeam.rank : null)
         }
+
+        const leaderboardData = await buildLeaderboardData()
+        applyLeaderboardState(leaderboardData)
 
         // Subscribe to teams table for real-time updates
-        const subscription = supabase
+        subscription = supabase
           .channel('teams_changes')
           .on(
             'postgres_changes',
-            { event: 'UPDATE', schema: 'public', table: 'teams' },
-            async (payload) => {
-              console.log('Team update detected:', payload)
-              // Reload leaderboard when teams change
-              const { data: updatedTeams, error: fetchError } = await supabase
-                .from('teams')
-                .select('id, name, score, member_count, leader_id')
-                .order('score', { ascending: false })
-
-              if (fetchError) {
-                console.error('Error fetching updated teams:', fetchError)
-                return
-              }
-
-              if (updatedTeams && updatedTeams.length > 0) {
-                const leaderIds = updatedTeams.map(t => t.leader_id)
-                const { data: leaders } = await supabase
-                  .from('users')
-                  .select('id, full_name, role')
-                  .in('id', leaderIds)
-
-                const leaderMap = new Map()
-                const leaderRoleMap = new Map()
-                leaders?.forEach(l => {
-                  leaderMap.set(l.id, l.full_name)
-                  leaderRoleMap.set(l.id, l.role)
-                })
-
-                const filteredTeams = updatedTeams.filter(team => leaderRoleMap.get(team.leader_id) !== 'admin')
-
-                const leaderboardData: TeamLeaderboardEntry[] = filteredTeams.map((team, index) => ({
-                  id: team.id,
-                  name: team.name,
-                  score: team.score,
-                  member_count: team.member_count,
-                  leader_id: team.leader_id,
-                  leader_name: leaderMap.get(team.leader_id) || 'Unknown',
-                  rank: index + 1,
-                }))
-
-                setEntries(leaderboardData)
-
-                const currentTeam = leaderboardData.find(t => t.id === userData?.team_id)
-                if (currentTeam) {
-                  setCurrentUserRank(currentTeam.rank)
-                }
+            { event: '*', schema: 'public', table: 'teams' },
+            async () => {
+              try {
+                const updatedData = await buildLeaderboardData()
+                applyLeaderboardState(updatedData)
+              } catch (refreshError) {
+                console.error('Error refreshing leaderboard from realtime update:', refreshError)
               }
             }
           )
-          .subscribe((status) => {
-            console.log('Subscription status:', status)
-          })
+          .subscribe()
 
         // Set up polling as fallback (refresh every 5 seconds)
-        const pollInterval = setInterval(async () => {
-          const { data: teamsData, error: teamError } = await supabase
-            .from('teams')
-            .select('id, name, score, member_count, leader_id')
-            .order('score', { ascending: false })
-
-          if (!teamError && teamsData) {
-            const leaderIds = teamsData.map(t => t.leader_id)
-            const { data: leadersData } = await supabase
-              .from('users')
-              .select('id, full_name, role')
-              .in('id', leaderIds)
-
-            const leaderMap = new Map()
-            const leaderRoleMap = new Map()
-            leadersData?.forEach(l => {
-              leaderMap.set(l.id, l.full_name)
-              leaderRoleMap.set(l.id, l.role)
-            })
-
-            const filteredTeams = teamsData.filter(team => leaderRoleMap.get(team.leader_id) !== 'admin')
-
-            const leaderboardData: TeamLeaderboardEntry[] = filteredTeams.map((team, index) => ({
-              id: team.id,
-              name: team.name,
-              score: team.score,
-              member_count: team.member_count,
-              leader_id: team.leader_id,
-              leader_name: leaderMap.get(team.leader_id) || 'Unknown',
-              rank: index + 1,
-            }))
-
-            setEntries(leaderboardData)
-
-            const currentTeam = leaderboardData.find(t => t.id === userData?.team_id)
-            if (currentTeam) {
-              setCurrentUserRank(currentTeam.rank)
-            }
+        pollInterval = setInterval(async () => {
+          try {
+            const updatedData = await buildLeaderboardData()
+            applyLeaderboardState(updatedData)
+          } catch (pollError) {
+            console.error('Error polling leaderboard data:', pollError)
           }
         }, 5000)
-
-        return () => {
-          subscription.unsubscribe()
-          clearInterval(pollInterval)
-        }
       } catch (err) {
         setError('Failed to load leaderboard')
       } finally {
@@ -204,6 +170,15 @@ export default function LeaderboardPage() {
     }
 
     loadLeaderboard()
+
+    return () => {
+      if (subscription) {
+        subscription.unsubscribe()
+      }
+      if (pollInterval) {
+        clearInterval(pollInterval)
+      }
+    }
   }, [supabase, router])
 
   const handleLogout = async () => {
@@ -214,46 +189,11 @@ export default function LeaderboardPage() {
   const refreshLeaderboard = async () => {
     setRefreshing(true)
     try {
-      const { data: teamsData, error: teamError } = await supabase
-        .from('teams')
-        .select('id, name, score, member_count, leader_id')
-        .order('score', { ascending: false })
+      const leaderboardData = await buildLeaderboardData()
+      setEntries(leaderboardData)
 
-      if (!teamError && teamsData) {
-        const leaderIds = teamsData.map(t => t.leader_id)
-        const { data: leadersData } = await supabase
-          .from('users')
-          .select('id, full_name, role')
-          .in('id', leaderIds)
-
-        const leaderMap = new Map()
-        const leaderRoleMap = new Map()
-        leadersData?.forEach(l => {
-          leaderMap.set(l.id, l.full_name)
-          leaderRoleMap.set(l.id, l.role)
-        })
-
-        const filteredTeams = teamsData.filter(
-          team => leaderRoleMap.get(team.leader_id) !== 'admin'
-        )
-
-        const leaderboardData: TeamLeaderboardEntry[] = filteredTeams.map((team, index) => ({
-          id: team.id,
-          name: team.name,
-          score: team.score,
-          member_count: team.member_count,
-          leader_id: team.leader_id,
-          leader_name: leaderMap.get(team.leader_id) || 'Unknown',
-          rank: index + 1,
-        }))
-
-        setEntries(leaderboardData)
-
-        const currentTeam = leaderboardData.find(t => t.id === currentUserTeamId)
-        if (currentTeam) {
-          setCurrentUserRank(currentTeam.rank)
-        }
-      }
+      const currentTeam = leaderboardData.find((team) => team.id === currentUserTeamId)
+      setCurrentUserRank(currentTeam ? currentTeam.rank : null)
     } catch (err) {
       console.error('Error refreshing leaderboard:', err)
     } finally {
