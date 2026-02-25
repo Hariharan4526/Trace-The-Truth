@@ -19,6 +19,7 @@ export default function ChallengePage() {
   const [submitting, setSubmitting] = useState(false)
   const [result, setResult] = useState<{ correct: boolean; message: string } | null>(null)
   const [user, setUser] = useState<any>(null)
+  const [teamSolved, setTeamSolved] = useState(false)
 
   useEffect(() => {
     const loadChallenge = async () => {
@@ -35,7 +36,22 @@ export default function ChallengePage() {
         .eq('id', session.user.id)
         .single()
 
+      if (!userData?.team_id) {
+        router.push('/team/join')
+        return
+      }
+
       setUser(userData)
+
+      const { data: teamSolvedData } = await supabase
+        .from('submissions')
+        .select('id')
+        .eq('team_id', userData.team_id)
+        .eq('challenge_id', challengeId)
+        .eq('is_correct', true)
+        .limit(1)
+
+      setTeamSolved(!!teamSolvedData?.length)
 
       // Fetch challenge
       try {
@@ -77,6 +93,25 @@ export default function ChallengePage() {
         return
       }
 
+      if (teamSolved) {
+        setResult({ correct: false, message: '✓ This challenge is already solved by your team.' })
+        return
+      }
+
+      const { data: existingTeamSolve } = await supabase
+        .from('submissions')
+        .select('id')
+        .eq('team_id', user?.team_id)
+        .eq('challenge_id', challengeId)
+        .eq('is_correct', true)
+        .limit(1)
+
+      if (existingTeamSolve && existingTeamSolve.length > 0) {
+        setTeamSolved(true)
+        setResult({ correct: false, message: '✓ This challenge is already solved by your team.' })
+        return
+      }
+
       const isCorrect = flag.trim() === challenge?.flag
 
       if (isCorrect) {
@@ -91,12 +126,27 @@ export default function ChallengePage() {
           return
         }
 
+        // Update team score
+        const { data: teamData } = await supabase
+          .from('teams')
+          .select('score')
+          .eq('id', user?.team_id)
+          .single()
+
+        if (teamData) {
+          await supabase
+            .from('teams')
+            .update({ score: (teamData.score || 0) + (challenge?.points || 0) })
+            .eq('id', user?.team_id)
+        }
+
         // Record submission
         await supabase
           .from('submissions')
           .insert([
             {
               user_id: session.user.id,
+              team_id: user?.team_id || null,
               challenge_id: challengeId,
               flag: flag,
               is_correct: true,
@@ -108,6 +158,7 @@ export default function ChallengePage() {
           message: `🎉 Correct! You earned ${challenge?.points} points!`,
         })
         setUser({ ...user, score: (user?.score || 0) + (challenge?.points || 0) })
+        setTeamSolved(true)
         setFlag('')
       } else {
         // Record failed submission
@@ -116,6 +167,7 @@ export default function ChallengePage() {
           .insert([
             {
               user_id: session.user.id,
+              team_id: user?.team_id || null,
               challenge_id: challengeId,
               flag: flag,
               is_correct: false,
@@ -259,17 +311,18 @@ export default function ChallengePage() {
                 type="text"
                 value={flag}
                 onChange={(e) => setFlag(e.target.value)}
-                placeholder="flag{...}"
+                placeholder="Enter the Answer"
+                disabled={teamSolved}
                 className="w-full px-4 py-3 bg-black border border-cyan-500/30 rounded text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/50 font-mono"
               />
             </div>
 
             <button
               type="submit"
-              disabled={submitting || result?.correct}
+              disabled={submitting || result?.correct || teamSolved}
               className="w-full bg-cyan-600 text-black font-bold py-3 rounded hover:bg-cyan-700 transition disabled:opacity-50 disabled:cursor-not-allowed font-mono uppercase tracking-wider"
             >
-              {submitting ? '⊳ VALIDATING...' : result?.correct ? '✓ SOLVED' : '⊳ SUBMIT FLAG'}
+              {submitting ? '⊳ VALIDATING...' : result?.correct || teamSolved ? '✓ SOLVED' : '⊳ SUBMIT FLAG'}
             </button>
           </form>
         </div>

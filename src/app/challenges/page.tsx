@@ -18,7 +18,7 @@ export default function ChallengesPage() {
   const [flag, setFlag] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [result, setResult] = useState<{ correct: boolean; message: string } | null>(null)
-  const [solvedChallenges, setSolvedChallenges] = useState<Set<string>>(new Set())
+  const [teamSolvedChallenges, setTeamSolvedChallenges] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -47,10 +47,10 @@ export default function ChallengesPage() {
       const { data: solvedData } = await supabase
         .from('submissions')
         .select('challenge_id')
-        .eq('user_id', session.user.id)
+        .eq('team_id', userData.team_id)
         .eq('is_correct', true)
       
-      setSolvedChallenges(new Set(solvedData?.map(s => s.challenge_id) || []))
+      setTeamSolvedChallenges(new Set(solvedData?.map(s => s.challenge_id) || []))
 
       try {
         const { data, error } = await supabase
@@ -88,6 +88,25 @@ export default function ChallengesPage() {
       const { data: { session } } = await supabase.auth.getSession()
       if (!session) {
         router.push('/login')
+        return
+      }
+
+      if (teamSolvedChallenges.has(selectedChallenge.id)) {
+        setResult({ correct: false, message: '✓ This challenge is already solved by your team.' })
+        return
+      }
+
+      const { data: existingTeamSolve } = await supabase
+        .from('submissions')
+        .select('id')
+        .eq('team_id', user?.team_id)
+        .eq('challenge_id', selectedChallenge.id)
+        .eq('is_correct', true)
+        .limit(1)
+
+      if (existingTeamSolve && existingTeamSolve.length > 0) {
+        setTeamSolvedChallenges(new Set([...teamSolvedChallenges, selectedChallenge.id]))
+        setResult({ correct: false, message: '✓ This challenge is already solved by your team.' })
         return
       }
 
@@ -151,7 +170,7 @@ export default function ChallengesPage() {
           message: `🎉 Correct! You earned ${selectedChallenge?.points} points!`,
         })
         setUser({ ...user, score: newScore })
-        setSolvedChallenges(new Set([...solvedChallenges, selectedChallenge.id]))
+        setTeamSolvedChallenges(new Set([...teamSolvedChallenges, selectedChallenge.id]))
         setFlag('')
         setTimeout(() => {
           setSelectedChallenge(null)
@@ -163,6 +182,7 @@ export default function ChallengesPage() {
           .insert([
             {
               user_id: session.user.id,
+              team_id: user?.team_id || null,
               challenge_id: selectedChallenge.id,
               flag: flag,
               is_correct: false,
@@ -416,9 +436,9 @@ export default function ChallengesPage() {
             )}
 
             {/* Result or Already Solved Message */}
-            {solvedChallenges.has(selectedChallenge.id) && (
+            {teamSolvedChallenges.has(selectedChallenge.id) && (
               <div className="bg-green-500/20 border-green-500/70 text-green-300 border px-4 py-3 rounded-lg mb-6 font-mono text-sm">
-                ✓ CHALLENGE ALREADY SOLVED
+                ✓ CHALLENGE ALREADY SOLVED BY YOUR TEAM
               </div>
             )}
 
@@ -442,18 +462,18 @@ export default function ChallengesPage() {
                   type="text"
                   value={flag}
                   onChange={(e) => setFlag(e.target.value)}
-                  placeholder="FLAG{...}"
-                  disabled={result?.correct || solvedChallenges.has(selectedChallenge.id)}
+                  placeholder="Enter the Answer"
+                  disabled={result?.correct || teamSolvedChallenges.has(selectedChallenge.id)}
                   className="cyber-input"
                 />
               </div>
 
               <button
                 type="submit"
-                disabled={submitting || result?.correct || solvedChallenges.has(selectedChallenge.id)}
+                disabled={submitting || result?.correct || teamSolvedChallenges.has(selectedChallenge.id)}
                 className="cyber-btn w-full disabled:opacity-50"
               >
-                {submitting ? '⊳ SUBMITTING...' : result?.correct ? '✓ SOLVED' : solvedChallenges.has(selectedChallenge.id) ? '✓ SOLVED' : '⊳ SUBMIT FLAG'}
+                {submitting ? '⊳ SUBMITTING...' : result?.correct ? '✓ SOLVED' : teamSolvedChallenges.has(selectedChallenge.id) ? '✓ SOLVED' : '⊳ SUBMIT FLAG'}
               </button>
             </form>
           </div>

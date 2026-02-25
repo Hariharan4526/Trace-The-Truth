@@ -19,7 +19,6 @@ interface TeamLeaderboardEntry {
 interface TeamRow {
   id: string
   name: string
-  member_count: number
   leader_id: string
 }
 
@@ -44,7 +43,7 @@ export default function LeaderboardPage() {
   const buildLeaderboardData = async (): Promise<TeamLeaderboardEntry[]> => {
     const { data: teams, error: teamError } = await supabase
       .from('teams')
-      .select('id, name, member_count, leader_id')
+      .select('id, name, leader_id')
 
     if (teamError) {
       throw new Error(teamError.message)
@@ -71,10 +70,12 @@ export default function LeaderboardPage() {
     const leaderMap = new Map<string, string>()
     const leaderRoleMap = new Map<string, string>()
     const teamScoreMap = new Map<string, number>()
+    const teamMemberCountMap = new Map<string, number>()
 
     userRows.forEach((teamUser) => {
       if (teamUser.team_id) {
         teamScoreMap.set(teamUser.team_id, (teamScoreMap.get(teamUser.team_id) || 0) + (teamUser.score || 0))
+        teamMemberCountMap.set(teamUser.team_id, (teamMemberCountMap.get(teamUser.team_id) || 0) + 1)
       }
 
       if (leaderIdSet.has(teamUser.id)) {
@@ -90,7 +91,7 @@ export default function LeaderboardPage() {
         id: team.id,
         name: team.name,
         score: teamScoreMap.get(team.id) || 0,
-        member_count: team.member_count,
+        member_count: teamMemberCountMap.get(team.id) || 0,
         leader_id: team.leader_id,
         leader_name: leaderMap.get(team.leader_id) || 'Unknown',
         rank: 0,
